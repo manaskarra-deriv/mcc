@@ -3,3 +3,44 @@
 # Local Netlify folder
 .netlify
 node_modules
+
+# Dependency directories
+venv/
+
+# Build output
+build/
+dist/
+*.out
+
+# Logs
+*.log
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Python specific
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Backend files
+api.py
+app.py
+requirements.txt
+
+# Archives / Misc
+*.zip
+.files/
+summary.json
+COPILOT.md

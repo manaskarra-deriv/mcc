@@ -3,9 +3,9 @@
  * Contains environment-specific API endpoints and configuration
  */
 
-// Base URL for API calls - uses ngrok URL in production or localhost in development
+// Base URL for API calls - uses environment variable in production or localhost in development
 export const API_BASE_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://9818-83-111-104-16.ngrok-free.app/api' 
+  ? '/api' 
   : 'http://localhost:5004/api';
 
 // Model configuration for AI features
