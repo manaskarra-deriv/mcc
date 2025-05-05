@@ -1,0 +1,43 @@
+2025-05-01 10:02:14,409 - werkzeug - WARNING -  * Debugger is active!
+2025-05-01 10:02:14,420 - werkzeug - INFO -  * Debugger PIN: 470-196-121
+2025-05-01 10:02:50,918 - werkzeug - INFO -  * Detected change in '/Users/manaskarra/Desktop/work/cc/api.py', reloading
+2025-05-01 10:02:51,402 - werkzeug - WARNING -  * Debugger is active!
+2025-05-01 10:02:51,408 - werkzeug - INFO -  * Debugger PIN: 470-196-121
+2025-05-01 10:03:23,102 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5003
+ * Running on http://192.168.44.76:5003
+2025-05-01 10:03:23,102 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-01 10:03:23,103 - werkzeug - INFO -  * Restarting with stat
+2025-05-01 10:03:23,524 - werkzeug - WARNING -  * Debugger is active!
+2025-05-01 10:03:23,534 - werkzeug - INFO -  * Debugger PIN: 470-196-121
+2025-05-01 10:03:38,258 - api - INFO - OpenAI analysis request: {"prompt": "Test prompt", "indicators": {"ticker": "SPY", "close": 554.02, "rsi": 62.95, "sma20": 550.1, "sma50": 560.3, "macd": 2.5, "signal": 1.2}}
+2025-05-01 10:03:38,258 - api - DEBUG - Using OpenAI model: gpt-4.1-mini
+2025-05-01 10:03:38,258 - api - DEBUG - API base URL: https://litellm.deriv.ai/v1
+2025-05-01 10:03:38,258 - api - DEBUG - API key present: Yes (first 5 chars: sk-HP)
+2025-05-01 10:03:38,258 - api - INFO - Sending request to OpenAI for SPY...
+2025-05-01 10:03:38,258 - api - DEBUG - Request payload: {"model": "gpt-4.1-mini", "messages": [{"role": "system", "content": "You are a professional financial analyst specializing in technical analysis of stocks and market data. Provide concise, expert analysis of technical indicators. Focus only on interpreting the data provided."}, {"role": "user", "content": "Test prompt"}], "temperature": 0.5, "max_tokens": 200}
+2025-05-01 10:03:38,258 - api - DEBUG - OpenAI API URL: https://litellm.deriv.ai/v1/chat/completions
+2025-05-01 10:03:38,258 - api - WARNING - Using fallback analysis (no valid API key or dummy key detected)
+2025-05-01 10:03:38,258 - api - INFO - Fallback analysis: Price is above 20-day SMA but below 50-day SMA, suggesting a potential short-term bullish reversal. RSI at 62.95 indicates positive momentum. MACD is above signal line, suggesting bullish momentum.
+2025-05-01 10:03:38,259 - werkzeug - INFO - 127.0.0.1 - - [01/May/2025 10:03:38] "POST /api/openai-analysis HTTP/1.1" 200 -
+2025-05-01 10:05:33,803 - werkzeug - INFO -  * Detected change in '/Users/manaskarra/Desktop/work/cc/api.py', reloading
+2025-05-01 10:05:33,846 - werkzeug - INFO -  * Restarting with stat
+2025-05-01 10:05:34,287 - werkzeug - WARNING -  * Debugger is active!
+2025-05-01 10:05:34,299 - werkzeug - INFO -  * Debugger PIN: 470-196-121
+2025-05-01 10:05:40,353 - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (1): data.alpaca.markets:443
+2025-05-01 10:05:40,952 - urllib3.connectionpool - DEBUG - https://data.alpaca.markets:443 "GET /v2/stocks/SPY/bars?start=2025-01-31T10%3A05%3A40Z&end=2025-05-01T10%3A05%3A40Z&timeframe=1Day&feed=iex HTTP/1.1" 200 None
+2025-05-01 10:05:40,978 - werkzeug - INFO - 127.0.0.1 - - [01/May/2025 10:05:40] "GET /api/technical-indicators/SPY?period=3mo HTTP/1.1" 200 -
+2025-05-01 10:05:40,987 - werkzeug - INFO - 127.0.0.1 - - [01/May/2025 10:05:40] "OPTIONS /api/openai-analysis HTTP/1.1" 200 -
+2025-05-01 10:05:40,988 - api - INFO - OpenAI analysis request: {"prompt": "\n      You are a professional financial analyst specializing in technical analysis.\n      Please provide a concise, expert analysis of the following technical indicators for SPY:\n      \n      Date: 2025-04-30\n      Close Price: 554.02\n      SMA 20: 533.58\n      SMA 50: 558.57\n      SMA 200: N/A\n      RSI: 55.58\n      MACD: -1.9829\n      Signal Line: -6.9181\n      MACD Histogram: 4.9351\n      Bollinger Upper Band: 570.04\n      Bollinger Lower Band: 497.11\n      \n      Provide a brief but comprehensive technical analysis focusing on:\n      1. Price position relative to moving averages\n      2. RSI interpretation\n      3. MACD signal interpretation\n      4. Overall market sentiment based on these indicators\n      \n      Keep your response under 4 sentences and be specific about the technical patterns.\n    ", "indicators": {"ticker": "SPY", "date": "2025-04-30", "close": 554.02, "sma20": 533.57775, "sma50": 558.5690999999999, "sma200": null, "rsi": 55.581899813348095, "macd": -1.9829265742403095, "signal": -6.918065112897221, "histogram": 4.935138538656911, "upper_band": 570.0423933621146, "lower_band": 497.11310663788544}}
+2025-05-01 10:05:40,989 - api - DEBUG - Using OpenAI model: gpt-4.1-mini
+2025-05-01 10:05:40,989 - api - DEBUG - API base URL: https://litellm.deriv.ai/v1
+2025-05-01 10:05:40,989 - api - DEBUG - API key present: Yes (first 5 chars: sk-HP)
+2025-05-01 10:05:40,989 - api - INFO - Sending request to OpenAI for SPY...
+2025-05-01 10:05:40,989 - api - DEBUG - Request payload: {"model": "gpt-4.1-mini", "messages": [{"role": "system", "content": "You are a professional financial analyst specializing in technical analysis of stocks and market data. Provide concise, expert analysis of technical indicators. Focus only on interpreting the data provided."}, {"role": "user", "content": "\n      You are a professional financial analyst specializing in technical analysis.\n      Please provide a concise, expert analysis of the following technical indicators for SPY:\n      \n      Date: 2025-04-30\n      Close Price: 554.02\n      SMA 20: 533.58\n      SMA 50: 558.57\n      SMA 200: N/A\n      RSI: 55.58\n      MACD: -1.9829\n      Signal Line: -6.9181\n      MACD Histogram: 4.9351\n      Bollinger Upper Band: 570.04\n      Bollinger Lower Band: 497.11\n      \n      Provide a brief but comprehensive technical analysis focusing on:\n      1. Price position relative to moving averages\n      2. RSI interpretation\n      3. MACD signal interpretation\n      4. Overall market sentiment based on these indicators\n      \n      Keep your response under 4 sentences and be specific about the technical patterns.\n    "}], "temperature": 0.5, "max_tokens": 200}
+2025-05-01 10:05:40,989 - api - DEBUG - OpenAI API URL: https://litellm.deriv.ai/v1/chat/completions
+2025-05-01 10:05:40,989 - api - WARNING - Using fallback analysis (no valid API key or dummy key detected)
+2025-05-01 10:05:40,989 - api - INFO - Fallback analysis: Price is above 20-day SMA but below 50-day SMA, suggesting a potential short-term bullish reversal. RSI at 55.58 indicates positive momentum. MACD is above signal line, suggesting bullish momentum.
+2025-05-01 10:05:40,989 - werkzeug - INFO - 127.0.0.1 - - [01/May/2025 10:05:40] "POST /api/openai-analysis HTTP/1.1" 200 -
+2025-05-01 10:06:10,848 - werkzeug - INFO -  * Detected change in '/Users/manaskarra/Desktop/work/cc/api.py', reloading
+2025-05-01 10:06:10,894 - werkzeug - INFO -  * Restarting with stat

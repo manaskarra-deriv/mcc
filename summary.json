@@ -1,0 +1,393 @@
+{
+  "data": {
+    "bonds": [
+      {
+        "change": 0.53,
+        "changePct": 0.56,
+        "name": "Treasury 7-10 Yr",
+        "price": 95.92,
+        "ticker": "IEF",
+        "volume": 292420.0
+      },
+      {
+        "change": -1.28,
+        "changePct": -1.39,
+        "name": "Treasury 20+ Yr",
+        "price": 90.19,
+        "ticker": "TLT",
+        "volume": 1013835.0
+      },
+      {
+        "change": 0.52,
+        "changePct": 0.63,
+        "name": "Treasury 1-3 Yr",
+        "price": 83.0,
+        "ticker": "SHY",
+        "volume": 57937.0
+      },
+      {
+        "change": -0.17,
+        "changePct": -0.15,
+        "name": "Corporate Bond",
+        "price": 108.47,
+        "ticker": "LQD",
+        "volume": 1344730.0
+      },
+      {
+        "change": 0.33,
+        "changePct": 0.43,
+        "name": "High Yield",
+        "price": 79.02,
+        "ticker": "HYG",
+        "volume": 2896260.0
+      },
+      {
+        "change": -0.06,
+        "changePct": -0.05,
+        "name": "TIPS",
+        "price": 110.37,
+        "ticker": "TIP",
+        "volume": 64133.0
+      },
+      {
+        "change": -1.14,
+        "changePct": -1.08,
+        "name": "Municipal Bonds",
+        "price": 104.36,
+        "ticker": "MUB",
+        "volume": 276561.0
+      }
+    ],
+    "commodities": [
+      {
+        "change": 0.04,
+        "changePct": 0.01,
+        "name": "Gold",
+        "price": 332.3,
+        "ticker": "GC=F",
+        "volume": 5065242
+      },
+      {
+        "change": -12.92,
+        "changePct": -5.53,
+        "name": "Silver",
+        "price": 220.48,
+        "ticker": "SI=F",
+        "volume": 4897179
+      },
+      {
+        "change": -1.58,
+        "changePct": -1.68,
+        "name": "Crude Oil",
+        "price": 92.32,
+        "ticker": "CL=F",
+        "volume": 188743.0
+      },
+      {
+        "change": 1.36,
+        "changePct": 45.64,
+        "name": "Natural Gas",
+        "price": 4.34,
+        "ticker": "NG=F",
+        "volume": 177903.0
+      },
+      {
+        "change": -2.55,
+        "changePct": -12.02,
+        "name": "Copper",
+        "price": 18.7,
+        "ticker": "HG=F",
+        "volume": 9078.0
+      },
+      {
+        "change": -13.37,
+        "changePct": -2.22,
+        "name": "Corn",
+        "price": 588.9,
+        "ticker": "ZC=F",
+        "volume": 717797
+      },
+      {
+        "change": -2.32,
+        "changePct": -0.29,
+        "name": "Wheat",
+        "price": 798.98,
+        "ticker": "ZW=F",
+        "volume": 387349
+      }
+    ],
+    "crypto": [
+      {
+        "change": 10461.49,
+        "changePct": 12.36,
+        "name": "Bitcoin",
+        "price": 95094.07,
+        "ticker": "BTC/USD",
+        "volume": 0.059875019
+      },
+      {
+        "change": -70.66,
+        "changePct": -3.76,
+        "name": "Ethereum",
+        "price": 1809.23,
+        "ticker": "ETH/USD",
+        "volume": 1.498931897
+      },
+      {
+        "change": 22.7,
+        "changePct": 18.17,
+        "name": "Solana",
+        "price": 147.64,
+        "ticker": "SOL/USD",
+        "volume": 4.234707145
+      },
+      {
+        "change": 63.68,
+        "changePct": 20.87,
+        "name": "Bitcoin Cash",
+        "price": 368.73,
+        "ticker": "BCH/USD",
+        "volume": 2.837099688
+      },
+      {
+        "change": 2.46,
+        "changePct": 2.98,
+        "name": "Litecoin",
+        "price": 85.07,
+        "ticker": "LTC/USD",
+        "volume": 7.696771075
+      }
+    ],
+    "forex": [
+      {
+        "change": -1.03,
+        "changePct": -0.16,
+        "name": "EUR/USD",
+        "price": 651.2,
+        "ticker": "EUR/USD",
+        "volume": 537119
+      },
+      {
+        "change": 2.15,
+        "changePct": 1.28,
+        "name": "USD/JPY",
+        "price": 169.37,
+        "ticker": "USD/JPY",
+        "volume": 8051525
+      },
+      {
+        "change": 15.22,
+        "changePct": 2.1,
+        "name": "GBP/USD",
+        "price": 740.43,
+        "ticker": "GBP/USD",
+        "volume": 6184069
+      },
+      {
+        "change": 17.65,
+        "changePct": 2.58,
+        "name": "USD/CAD",
+        "price": 700.35,
+        "ticker": "USD/CAD",
+        "volume": 5086963
+      },
+      {
+        "change": 16.63,
+        "changePct": 5.87,
+        "name": "AUD/USD",
+        "price": 299.87,
+        "ticker": "AUD/USD",
+        "volume": 7237363
+      },
+      {
+        "change": -1.35,
+        "changePct": -0.26,
+        "name": "USD/CHF",
+        "price": 509.87,
+        "ticker": "USD/CHF",
+        "volume": 214539
+      },
+      {
+        "change": -2.93,
+        "changePct": -0.32,
+        "name": "USD Index",
+        "price": 909.49,
+        "ticker": "DXY",
+        "volume": 1275144
+      }
+    ],
+    "indices": [
+      {
+        "change": -7.01,
+        "changePct": -1.25,
+        "name": "S&P 500",
+        "price": 554.09,
+        "ticker": "SPY",
+        "volume": 818179.0
+      },
+      {
+        "change": 2.76,
+        "changePct": 0.58,
+        "name": "NASDAQ",
+        "price": 475.38,
+        "ticker": "QQQ",
+        "volume": 404084.0
+      },
+      {
+        "change": -14.35,
+        "changePct": -3.42,
+        "name": "Dow Jones",
+        "price": 405.17,
+        "ticker": "DIA",
+        "volume": 18820.0
+      },
+      {
+        "change": -3.48,
+        "changePct": -1.74,
+        "name": "Russell 2000",
+        "price": 196.05,
+        "ticker": "IWM",
+        "volume": 458022.0
+      },
+      {
+        "change": 0.89,
+        "changePct": 2.38,
+        "name": "FTSE 100",
+        "price": 38.33,
+        "ticker": "EWU",
+        "volume": 27074.0
+      },
+      {
+        "change": 2.36,
+        "changePct": 6.33,
+        "name": "DAX",
+        "price": 39.65,
+        "ticker": "EWG",
+        "volume": 161618.0
+      },
+      {
+        "change": 3.84,
+        "changePct": 5.63,
+        "name": "Nikkei 225",
+        "price": 72.03,
+        "ticker": "EWJ",
+        "volume": 122147.0
+      },
+      {
+        "change": -1.95,
+        "changePct": -5.47,
+        "name": "Shanghai",
+        "price": 33.81,
+        "ticker": "FXI",
+        "volume": 806479.0
+      },
+      {
+        "change": -0.61,
+        "changePct": -3.41,
+        "name": "Hang Seng",
+        "price": 17.12,
+        "ticker": "EWH",
+        "volume": 69454.0
+      },
+      {
+        "change": 0.83,
+        "changePct": 3.5,
+        "name": "ASX 200",
+        "price": 24.54,
+        "ticker": "EWA",
+        "volume": 21151.0
+      }
+    ],
+    "sectors": [
+      {
+        "change": 1.12,
+        "changePct": 0.54,
+        "name": "Technology",
+        "price": 209.15,
+        "ticker": "XLK",
+        "volume": 184136.0
+      },
+      {
+        "change": -1.08,
+        "changePct": -2.17,
+        "name": "Financials",
+        "price": 48.66,
+        "ticker": "XLF",
+        "volume": 2494791.0
+      },
+      {
+        "change": -4.11,
+        "changePct": -2.87,
+        "name": "Healthcare",
+        "price": 139.26,
+        "ticker": "XLV",
+        "volume": 444234.0
+      },
+      {
+        "change": -0.41,
+        "changePct": -0.21,
+        "name": "Consumer Disc.",
+        "price": 199.11,
+        "ticker": "XLY",
+        "volume": 71268.0
+      },
+      {
+        "change": -11.4,
+        "changePct": -12.12,
+        "name": "Energy",
+        "price": 82.63,
+        "ticker": "XLE",
+        "volume": 408807.0
+      },
+      {
+        "change": 0.19,
+        "changePct": 0.24,
+        "name": "Utilities",
+        "price": 79.26,
+        "ticker": "XLU",
+        "volume": 245213.0
+      },
+      {
+        "change": -0.79,
+        "changePct": -1.89,
+        "name": "Real Estate",
+        "price": 41.11,
+        "ticker": "XLRE",
+        "volume": 318561.0
+      },
+      {
+        "change": -2.83,
+        "changePct": -3.28,
+        "name": "Materials",
+        "price": 83.45,
+        "ticker": "XLB",
+        "volume": 197321.0
+      },
+      {
+        "change": -1.6,
+        "changePct": -1.21,
+        "name": "Industrials",
+        "price": 130.24,
+        "ticker": "XLI",
+        "volume": 174284.0
+      },
+      {
+        "change": -0.59,
+        "changePct": -0.72,
+        "name": "Consumer Staples",
+        "price": 81.21,
+        "ticker": "XLP",
+        "volume": 504475.0
+      },
+      {
+        "change": -1.14,
+        "changePct": -1.18,
+        "name": "Communication",
+        "price": 95.38,
+        "ticker": "XLC",
+        "volume": 70602.0
+      }
+    ]
+  },
+  "status": "success"
+}

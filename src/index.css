@@ -1,0 +1,279 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #f8fafc;
+  color: #2c3e50;
+}
+
+/* Status colors */
+.positive {
+  color: #06d6a0 !important;
+}
+
+.negative {
+  color: #ef476f !important;
+}
+
+.neutral {
+  color: #64748b !important;
+}
+
+/* Card styling */
+.market-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 1.25rem;
+  border-radius: 16px;
+  background-color: white;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.market-card:hover {
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.09);
+  transform: translateY(-5px);
+}
+
+.market-card-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #64748b;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.01em;
+}
+
+.market-card-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+  letter-spacing: -0.02em;
+}
+
+.market-card-subtitle {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  margin-bottom: 0.75rem;
+}
+
+/* Highlight card - with accent border */
+.highlight-card {
+  border-top: 4px solid #6c63ff;
+}
+
+/* Table styling */
+.market-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.market-table th {
+  text-align: left;
+  padding: 0.75rem 1rem;
+  font-weight: 600;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  color: #64748b;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.market-table td {
+  padding: 0.875rem 1rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  font-size: 0.875rem;
+}
+
+.market-table tr:hover td {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+.market-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* Chart containers */
+.chart-container {
+  height: 300px;
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* Badge styles */
+.badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+}
+
+.badge-primary {
+  background-color: rgba(58, 80, 107, 0.1);
+  color: #3a506b;
+}
+
+.badge-secondary {
+  background-color: rgba(108, 99, 255, 0.1);
+  color: #6c63ff;
+}
+
+.badge-success {
+  background-color: rgba(6, 214, 160, 0.1);
+  color: #06d6a0;
+}
+
+.badge-danger {
+  background-color: rgba(239, 71, 111, 0.1);
+  color: #ef476f;
+}
+
+.badge-warning {
+  background-color: rgba(255, 209, 102, 0.1);
+  color: #ffd166;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .market-card {
+    padding: 1rem;
+  }
+  
+  .market-card-value {
+    font-size: 1.25rem;
+  }
+  
+  .chart-container {
+    height: 250px;
+  }
+}
+
+/* Tooltips */
+.light-tooltip {
+  color: rgba(0, 0, 0, 0.87);
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.75rem;
+}
+
+/* Page header */
+.page-header {
+  margin-bottom: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Section titles */
+.section-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  letter-spacing: -0.02em;
+  position: relative;
+}
+
+.section-title::after {
+  content: '';
+  position: absolute;
+  bottom: -0.5rem;
+  left: 0;
+  width: 2rem;
+  height: 3px;
+  background: linear-gradient(to right, #6c63ff, rgba(108, 99, 255, 0.3));
+  border-radius: 3px;
+}
+
+/* Card content highlight */
+.card-highlight {
+  position: relative;
+}
+
+.card-highlight::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 4px;
+  background: linear-gradient(to bottom, #6c63ff, rgba(108, 99, 255, 0.3));
+  border-radius: 0 8px 8px 0;
+}
+
+/* Gradient text */
+.gradient-text {
+  background: linear-gradient(45deg, #3a506b, #6c63ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Gradient background for cards */
+.gradient-bg {
+  background: linear-gradient(135deg, rgba(58, 80, 107, 0.03) 0%, rgba(108, 99, 255, 0.06) 100%);
+}
+
+/* Button styles */
+.app-button {
+  border-radius: 12px;
+  font-weight: 600;
+  transition: all 0.2s ease-in-out;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.app-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.app-button-primary {
+  background: linear-gradient(45deg, #3a506b 30%, #5d7599 90%);
+  color: white;
+}
+
+.app-button-secondary {
+  background: linear-gradient(45deg, #6c63ff 30%, #9f99ff 90%);
+  color: white;
+}
+
+/* Skeleton loading animation */
+.skeleton {
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite ease-in-out;
+  border-radius: 4px;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+} 

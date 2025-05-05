@@ -1,0 +1,336 @@
+import React, { useState } from 'react';
+import { 
+  Typography, 
+  Paper, 
+  TextField, 
+  Button, 
+  Box, 
+  Tab, 
+  Tabs,
+  CircularProgress,
+  Alert,
+  Card,
+  CardContent,
+  Divider,
+  Grid,
+  Link
+} from '@mui/material';
+import { styled } from '@mui/material/styles';
+import SearchIcon from '@mui/icons-material/Search';
+
+// Custom TabPanel component
+function TabPanel(props) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`catalysts-tabpanel-${index}`}
+      aria-labelledby={`catalysts-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box sx={{ p: 3 }}>
+          {children}
+        </Box>
+      )}
+    </div>
+  );
+}
+
+const StyledAlert = styled(Alert)(({ theme }) => ({
+  marginBottom: theme.spacing(2),
+}));
+
+const NewsCard = styled(Card)(({ theme }) => ({
+  marginBottom: theme.spacing(2),
+}));
+
+function FundamentalCatalysts() {
+  const [symbol, setSymbol] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [results, setResults] = useState(null);
+  const [tabValue, setTabValue] = useState(0);
+  const [error, setError] = useState(null);
+
+  const handleSymbolChange = (event) => {
+    setSymbol(event.target.value);
+  };
+
+  const handleTabChange = (event, newValue) => {
+    setTabValue(newValue);
+  };
+
+  const handleSearch = async () => {
+    if (!symbol) return;
+    
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      // Updated to make sure we're hitting the correct endpoint
+      const response = await fetch(`/api/fundamental-catalysts`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ symbol }),
+      });
+      
+      if (!response.ok) {
+        throw new Error(`API responded with status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      setResults(data);
+      setTabValue(0); // Reset to first tab
+    } catch (err) {
+      console.error('Error fetching fundamental catalysts:', err);
+      setError(err.message || 'Failed to fetch fundamental catalysts data');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Demo categories for tabs (will come from API)
+  const categories = [
+    'Recent News',
+    'Earnings',
+    'Industry Trends',
+    'Regulation',
+    'Market Sentiment',
+    'AI Summary'
+  ];
+
+  return (
+    <div>
+      <Typography variant="h4" gutterBottom>
+        Fundamental Catalysts
+      </Typography>
+      <Typography variant="body1" paragraph>
+        Analyze fundamental factors and news that could affect a stock's performance.
+      </Typography>
+
+      <Paper sx={{ p: 3, mb: 4 }}>
+        <Box sx={{ display: 'flex', alignItems: 'flex-end', gap: 2 }}>
+          <TextField
+            label="Enter Stock Symbol"
+            variant="outlined"
+            value={symbol}
+            onChange={handleSymbolChange}
+            placeholder="e.g., AAPL, MSFT"
+            fullWidth
+          />
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<SearchIcon />}
+            onClick={handleSearch}
+            disabled={isLoading || !symbol}
+          >
+            Analyze
+          </Button>
+        </Box>
+      </Paper>
+
+      {isLoading && (
+        <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
+          <CircularProgress />
+        </Box>
+      )}
+
+      {error && (
+        <StyledAlert severity="error">
+          {error}
+        </StyledAlert>
+      )}
+
+      {!isLoading && !results && !error && (
+        <Paper sx={{ p: 3 }}>
+          <Typography variant="h6" gutterBottom>
+            What are Fundamental Catalysts?
+          </Typography>
+          <Typography variant="body1" paragraph>
+            Fundamental catalysts are events or developments that can significantly impact a company's stock price:
+          </Typography>
+          <ul>
+            <li><Typography><strong>Earnings reports</strong> and guidance</Typography></li>
+            <li><Typography><strong>Industry trends</strong> and competitive positioning</Typography></li>
+            <li><Typography><strong>Regulatory changes</strong> affecting the company or industry</Typography></li>
+            <li><Typography><strong>Macroeconomic factors</strong> that influence the business</Typography></li>
+            <li><Typography><strong>Market sentiment</strong> and investor outlook</Typography></li>
+          </ul>
+          <Typography variant="body1">
+            This tool uses AI to analyze recent news and information about a stock to identify potential catalysts.
+          </Typography>
+        </Paper>
+      )}
+
+      {results && (
+        <Box sx={{ width: '100%' }}>
+          <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+            <Tabs value={tabValue} onChange={handleTabChange} aria-label="catalyst categories">
+              {categories.map((category, index) => (
+                <Tab label={category} key={index} />
+              ))}
+            </Tabs>
+          </Box>
+
+          {/* AI Summary Tab (will be populated with actual API data) */}
+          <TabPanel value={tabValue} index={5}>
+            <Typography variant="h5" gutterBottom>
+              AI Analysis of {symbol} Fundamental Catalysts
+            </Typography>
+            
+            <Typography variant="body1" paragraph>
+              Based on the collected information, here's a comprehensive analysis of the key factors affecting {symbol}:
+            </Typography>
+            
+            <Grid container spacing={3}>
+              <Grid item xs={12} md={6}>
+                <Card sx={{ backgroundColor: '#e8f5e9' }}>
+                  <CardContent>
+                    <Typography variant="h6" gutterBottom>
+                      Key Positive Catalysts
+                    </Typography>
+                    <ul>
+                      <li>Strong quarterly earnings growth exceeding analyst expectations</li>
+                      <li>New product launches planned for next quarter</li>
+                      <li>Expanding market share in key segments</li>
+                    </ul>
+                  </CardContent>
+                </Card>
+              </Grid>
+              
+              <Grid item xs={12} md={6}>
+                <Card sx={{ backgroundColor: '#ffebee' }}>
+                  <CardContent>
+                    <Typography variant="h6" gutterBottom>
+                      Risk Factors
+                    </Typography>
+                    <ul>
+                      <li>Increasing competitive pressure in core markets</li>
+                      <li>Potential regulatory challenges in international markets</li>
+                      <li>Supply chain constraints affecting production capacity</li>
+                    </ul>
+                  </CardContent>
+                </Card>
+              </Grid>
+            </Grid>
+            
+            <Divider sx={{ my: 3 }} />
+            
+            <Typography variant="h6" gutterBottom>
+              Overall Market Sentiment
+            </Typography>
+            <Alert severity="info" sx={{ mb: 2 }}>
+              The overall market sentiment for {symbol} appears cautiously optimistic, with positive momentum in the short term but some headwinds expected later in the year.
+            </Alert>
+          </TabPanel>
+          
+          {/* Example news content for the first tab (will be replaced with actual API data) */}
+          <TabPanel value={tabValue} index={0}>
+            <NewsCard>
+              <CardContent>
+                <Typography variant="h6" gutterBottom>
+                  {symbol} Reports Strong Quarterly Results
+                </Typography>
+                <Typography variant="body1" paragraph>
+                  The company reported earnings that exceeded analyst expectations, with revenue growth of 15% year-over-year. Management raised guidance for the upcoming fiscal year.
+                </Typography>
+                <Link href="#" target="_blank" rel="noopener">
+                  Read more
+                </Link>
+              </CardContent>
+            </NewsCard>
+            
+            <NewsCard>
+              <CardContent>
+                <Typography variant="h6" gutterBottom>
+                  Analysts Increase Price Targets After Earnings Beat
+                </Typography>
+                <Typography variant="body1" paragraph>
+                  Several Wall Street analysts have raised their price targets following the strong quarterly results, citing improved margins and growth outlook.
+                </Typography>
+                <Link href="#" target="_blank" rel="noopener">
+                  Read more
+                </Link>
+              </CardContent>
+            </NewsCard>
+          </TabPanel>
+          
+          {/* Rendering actual API results */}
+          <TabPanel value={tabValue} index={0}>
+            {results?.results?.documents?.map((article, idx) => (
+              <NewsCard key={idx}>
+                <CardContent>
+                  <Typography variant="h6" gutterBottom>
+                    {article.title}
+                  </Typography>
+                  <Typography variant="body1" paragraph>
+                    {article.text}
+                  </Typography>
+                  {article.url && (
+                    <Link href={article.url} target="_blank" rel="noopener">
+                      Read more
+                    </Link>
+                  )}
+                </CardContent>
+              </NewsCard>
+            ))}
+            
+            {(!results?.results?.documents || results.results.documents.length === 0) && (
+              <Alert severity="info">
+                No recent news articles found for {symbol}
+              </Alert>
+            )}
+          </TabPanel>
+          
+          {/* Recent News Tab */}
+          <TabPanel value={tabValue} index={0}>
+            {/* Display API data when available */}
+            {results?.results?.documents ? (
+              <>
+                {results.results.documents.map((article, idx) => (
+                  <NewsCard key={idx}>
+                    <CardContent>
+                      <Typography variant="h6" gutterBottom>
+                        {article.title}
+                      </Typography>
+                      <Typography variant="body1" paragraph>
+                        {article.text}
+                      </Typography>
+                      {article.url && (
+                        <Link href={article.url} target="_blank" rel="noopener">
+                          Read more
+                        </Link>
+                      )}
+                    </CardContent>
+                  </NewsCard>
+                ))}
+                
+                {results.results.documents.length === 0 && (
+                  <Alert severity="info">
+                    No recent news articles found for {symbol}
+                  </Alert>
+                )}
+              </>
+            ) : null}
+          </TabPanel>
+          
+          {/* Placeholder tabs for other categories */}
+          {[1, 2, 3, 4].map((index) => (
+            <TabPanel value={tabValue} index={index} key={index}>
+              <Typography variant="body1">
+                {categories[index]} information will be displayed here when available from the API.
+              </Typography>
+            </TabPanel>
+          ))}
+        </Box>
+      )}
+    </div>
+  );
+}
+
+export default FundamentalCatalysts; 
