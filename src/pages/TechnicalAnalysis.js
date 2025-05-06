@@ -1068,7 +1068,7 @@ const TechnicalAnalysis = () => {
                             <Box sx={{ 
                               display: 'flex', 
                               justifyContent: 'space-between', 
-                              alignItems: 'center',
+                              alignItems: 'center', 
                               padding: '12px 18px', 
                               background: 'linear-gradient(to right, rgba(239, 71, 111, 0.15), rgba(239, 71, 111, 0.05))', 
                               borderRadius: 2.5,

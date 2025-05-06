@@ -97,6 +97,15 @@ def create_mock_data(ticker, start_date, end_date):
 def get_crypto_data(symbol, start_date, end_date, timeframe=TimeFrame.Day):
     print(f"Attempting to fetch Alpaca Crypto data for {symbol} from {start_date} to {end_date}")
     
+    # Validate dates - ensure we don't use future dates
+    now = datetime.now()
+    if end_date > now:
+        print(f"Warning: End date {end_date} is in the future, using current time instead")
+        end_date = now
+    if start_date > now:
+        print(f"Warning: Start date {start_date} is in the future, using 30 days ago instead")
+        start_date = now - timedelta(days=30)
+    
     # Format dates for the API
     start_str = start_date.strftime('%Y-%m-%dT%H:%M:%SZ')
     end_str = end_date.strftime('%Y-%m-%dT%H:%M:%SZ')
@@ -123,11 +132,15 @@ def get_crypto_data(symbol, start_date, end_date, timeframe=TimeFrame.Day):
     crypto_symbol = symbol
     formatted_symbol = symbol.replace('/', '')
     
+    # Use data.alpaca.markets for crypto data instead of paper-api.alpaca.markets
+    # This is the correct base URL for market data
+    base_url = "https://data.alpaca.markets"
+    
     # Try different API endpoints in sequence
     apis_to_try = [
         # First try v2 crypto endpoint
         {
-            "url": f"{ALPACA_BASE_URL}/v2/crypto/bars",
+            "url": f"{base_url}/v2/crypto/bars",
             "params": {
                 'symbols': formatted_symbol,
                 'start': start_str,
@@ -138,7 +151,7 @@ def get_crypto_data(symbol, start_date, end_date, timeframe=TimeFrame.Day):
         },
         # Then try the beta3 endpoint
         {
-            "url": f"{ALPACA_BASE_URL.replace('/v2', '')}/v1beta3/crypto/us/bars",
+            "url": f"{base_url}/v1beta3/crypto/us/bars",
             "params": {
                 'symbols': crypto_symbol,
                 'start': start_str,
@@ -149,7 +162,7 @@ def get_crypto_data(symbol, start_date, end_date, timeframe=TimeFrame.Day):
         },
         # Then try another common format
         {
-            "url": f"{ALPACA_BASE_URL}/v1beta1/crypto/bars",
+            "url": f"{base_url}/v1beta1/crypto/bars",
             "params": {
                 'symbol': formatted_symbol,
                 'start': start_str,
@@ -216,6 +229,7 @@ def get_crypto_data(symbol, start_date, end_date, timeframe=TimeFrame.Day):
                     
                     # Convert to DataFrame
                     df = pd.DataFrame(bars)
+                    
                     # Handle different column naming
                     if 't' in df.columns:
                         df['date'] = pd.to_datetime(df['t']).dt.strftime('%Y-%m-%d')
@@ -530,56 +544,56 @@ def get_alpaca_data(ticker, start_date, end_date, timeframe=TimeFrame.Day, asset
         # For stocks and ETFs, use the stock client
         global stock_client
         
-        # Initialize the stock client if it's None
+        # Initialize the stock client if it's not already initialized
         if stock_client is None:
-            print("Initializing Alpaca stock client...")
-            stock_client = StockHistoricalDataClient(ALPACA_API_KEY, ALPACA_SECRET_KEY)
-            
-        if stock_client is None:
-            print("Failed to initialize Alpaca client, using mock data instead")
-            return create_mock_data(ticker, start_date, end_date)
-            
+            try:
+                # Attempt to initialize with real API keys
+                stock_client = StockHistoricalDataClient(ALPACA_API_KEY, ALPACA_SECRET_KEY)
+                print("Initialized real Alpaca stock client")
+            except Exception as e:
+                print(f"Error initializing Alpaca stock client: {e}, using mock client")
+                # Use a mock client that just returns signature but no real data
+                stock_client = StockHistoricalDataClient("mock", "mock")
+        
+        # Create request for stock bars
         request_params = StockBarsRequest(
-            symbol_or_symbols=ticker,
+            symbol_or_symbols=[ticker],
             timeframe=timeframe,
             start=start_date,
             end=end_date,
-            feed='iex'  # Use IEX as data source instead of SIP
+            adjustment='raw'
         )
         
         try:
-                bars = stock_client.get_stock_bars(request_params)
+            bars = stock_client.get_stock_bars(request_params)
+            
+            # Check if bars is None or empty
+            if bars is None or not hasattr(bars, 'df') or bars.df.empty:
+                print(f"No data returned from Alpaca for {ticker}, falling back to mock data")
+                return create_mock_data(ticker, start_date, end_date)
                 
-                # Check if bars is None or empty
-                if bars is None or not hasattr(bars, 'df') or bars.df.empty:
-                    raise Exception(f"No data returned for {ticker}")
-                    
-                df = bars.df.reset_index()
+            # Convert to a simple list of dictionaries for consistency
+            df = bars.df.reset_index()
+            
+            # Format dates correctly
+            df['date'] = df['timestamp'].dt.strftime('%Y-%m-%d')
+            
+            # Keep only the columns we care about
+            result_df = df[['date', 'open', 'high', 'low', 'close', 'volume']]
+            
+            # Convert to list of dictionaries (records)
+            result = result_df.to_dict('records')
+            
+            # Sort by date if needed
+            result = sorted(result, key=lambda x: x['date'])
+            
+            # If we got an empty result, fall back to mock data
+            if not result:
+                print(f"Empty result from Alpaca for {ticker}, falling back to mock data")
+                return create_mock_data(ticker, start_date, end_date)
                 
-                # Process the DataFrame to match our expected format
-                df = df.rename(columns={
-                    'timestamp': 'date',
-                    'open': 'open',
-                    'high': 'high',
-                    'low': 'low',
-                    'close': 'close',
-                    'volume': 'volume'
-                })
-                
-                # Format date
-                df['date'] = df['date'].dt.strftime('%Y-%m-%d')
-                
-                # Drop level 0 of the multi-index if it exists
-                if isinstance(df.columns, pd.MultiIndex):
-                    df.columns = df.columns.droplevel(0)
-                
-                # Handle symbol column if it exists
-                if 'symbol' in df.columns:
-                    df = df.drop('symbol', axis=1)
-                    
-                result = df.to_dict('records')
-                print(f"SUCCESS: Got real Alpaca data for {ticker} - {len(result)} bars")
-                return result
+            print(f"SUCCESS: Got real Alpaca data for {ticker} - {len(result)} bars")
+            return result
         except Exception as e:
             print(f"Error in Alpaca API call: {e}, falling back to mock data")
             # If we get an error, fall back to mock data
@@ -657,6 +671,13 @@ def get_market_date_range(time_range):
     """
     # Make sure we get today's date, with explicit UTC to prevent timezone issues
     end = datetime.now().replace(microsecond=0)
+    
+    # Ensure the end date is not in the future - sanity check
+    now = datetime.now()
+    if end > now:
+        print(f"Warning: End date {end} appears to be in the future! System clock may be incorrect.")
+        # Just to be safe, make end time now
+        end = now
     
     # For daily data, ensure we look back far enough to account for weekends and holidays
     if time_range == '1d':
@@ -1792,7 +1813,7 @@ def get_fundamental_catalyst_summary():
         # Generate news sources with useful links
         news_sources = []
         
-        # Create different news sources based on asset class
+        # Generate crypto news sources with useful links
         if asset_class == "crypto":
             # Clean symbol for URLs
             clean_symbol = symbol.lower().replace('/', '-')
@@ -1809,8 +1830,8 @@ def get_fundamental_catalyst_summary():
                 },
                 {
                     "title": f"Market News Affecting {symbol} Today",
-                    "url": f"https://www.coindesk.com/tag/{symbol.lower().replace('/', '')}",
-                    "source": "CoinDesk"
+                    "url": f"https://cryptopanic.com/news/{clean_symbol}/",
+                    "source": "CryptoPanic"
                 }
             ]
         else:
@@ -1822,14 +1843,14 @@ def get_fundamental_catalyst_summary():
                     "source": "Yahoo Finance"
                 },
                 {
-                    "title": f"Economic Calendar - Events Impacting {symbol}",
+                    "title": f"Economic Calendar Events",
                     "url": "https://www.investing.com/economic-calendar/",
                     "source": "Investing.com"
                 },
                 {
                     "title": f"Market News Affecting {symbol} Today",
-                    "url": f"https://www.marketwatch.com/investing/stock/{symbol.lower()}",
-                    "source": "MarketWatch"
+                    "url": f"https://finviz.com/quote.ashx?t={symbol}",
+                    "source": "Finviz"
                 }
             ]
         
@@ -2384,39 +2405,6 @@ def get_alpaca_client():
     except Exception as e:
         print(f"Error initializing Alpaca client: {e}")
     return None
-
-# Add root route to serve a welcome page
-@app.route('/')
-def index():
-    """Serve a simple welcome page for the root URL"""
-    return """
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <title>Market Data API</title>
-        <style>
-            body { font-family: Arial, sans-serif; line-height: 1.6; margin: 0; padding: 20px; max-width: 800px; margin: 0 auto; }
-            h1 { color: #333; }
-            ul { margin-top: 20px; }
-            li { margin-bottom: 10px; }
-            code { background-color: #f4f4f4; padding: 2px 5px; border-radius: 3px; }
-        </style>
-    </head>
-    <body>
-        <h1>Market Data API</h1>
-        <p>Welcome to the Market Data API. This API provides financial market data including stocks, cryptocurrencies, and market indices.</p>
-        
-        <h2>Available Endpoints:</h2>
-        <ul>
-            <li><code>/api/market-categories</code> - Get available market categories</li>
-            <li><code>/api/tickers/{category}</code> - Get tickers for a specific category</li>
-            <li><code>/api/market-data/{ticker}</code> - Get price data for a specific ticker</li>
-            <li><code>/api/market-summary</code> - Get a summary of market performance</li>
-            <li><code>/api/technical-indicators/{ticker}</code> - Get technical indicators for a ticker</li>
-        </ul>
-    </body>
-    </html>
-    """
 
 if __name__ == '__main__':
     app.run(debug=True, port=5004, host='0.0.0.0') 

@@ -455,96 +455,48 @@ const FundamentalCatalystsFixed = () => {
       "specifically", "particularly", "especially", "namely"
     ];
     
-    // Patterns that indicate a sentence might be incomplete
-    const incompletePatterns = [
-      /^(The|A|An|This|That|These|Those)\s[A-Za-z\s]+(U\.S\.|E\.U\.|U\.K\.)$/,  // "The highly anticipated U.S."
-      /^[^\.]{5,30}$/,  // Short phrases without periods (5-30 chars)
-      /\b(will|should|could|would|may|might|must|can|shall)\s*$/,  // Ends with modal verb
-      /^[^\.]{1,50}\s(at|on|in|for|with|by|about)$/,  // Ends with preposition
-      /^[^\.]{1,50}(the|a|an|this|that)$/i,  // Ends with article
-    ];
-    
-    // Preprocess text to fix common formatting issues
-    // Remove excessive whitespace, normalize periods, etc.
-    text = text.replace(/\s+/g, ' ')
-               .replace(/\.\s*\./g, '.')  // Replace multiple periods
-               .replace(/\s+\./g, '.')    // Remove space before period
-               .trim();
-    
     // Break the text into individual sentences and apply formatting
     // This improved version will detect sentence fragments that should be merged
-    let sentences = text.split(". ").map(s => s.trim()).filter(Boolean);
+    let sentences = text.split(". ").filter(s => s.trim());
     
-    // Detect and merge sentences intelligently
+    // Detect and merge continuation sentences
     let mergedSentences = [];
     let currentSentence = "";
     
-    for (let i = 0; i < sentences.length; i++) {
-      const sentence = sentences[i];
+    sentences.forEach((sentence, index) => {
+      const trimmedSentence = sentence.trim();
       
-      // Check if this sentence is likely a continuation or incomplete
-      const isIncomplete = incompletePatterns.some(pattern => pattern.test(sentence));
-      const startsWithLowercase = /^[a-z]/.test(sentence);
+      // Check if this sentence starts with a lowercase letter or a continuation word
+      const startsWithLowercase = /^[a-z]/.test(trimmedSentence);
       const startsWithContinuationWord = continuationWords.some(word => 
-        new RegExp(`^${word}\\b`, 'i').test(sentence)
+        new RegExp(`^${word}\\b`, 'i').test(trimmedSentence)
       );
-      const shortSentence = sentence.length < 40 && !sentence.includes(",");
-      const hasNoEndPunctuation = !/[.?!]$/.test(sentence);
       
-      // Check for continuation words anywhere in a short sentence
+      // Check for continuation words anywhere in the sentence if it's short
+      // This helps detect fragments like "Concurrently, the U.S."
       const containsContinuationWord = 
-        sentence.length < 60 && 
+        trimmedSentence.length < 60 && 
         continuationWords.some(word => 
-          new RegExp(`\\b${word}\\b`, 'i').test(sentence) &&
-          !new RegExp(`^${word}\\b`, 'i').test(sentence) // Not at start
+          new RegExp(`\\b${word}\\b`, 'i').test(trimmedSentence) &&
+          !new RegExp(`^${word}\\b`, 'i').test(trimmedSentence) // Not at start
         );
       
-      // Special case: Fixed phrases that are likely part of date/time references
-      const isTimeReference = /\d+:\d+\s*(AM|PM)\s*(ET|EST|EDT|UTC|GMT)/i.test(sentence);
-      
-      // Check if we should combine with next sentence (look ahead)
-      const shouldMergeWithNext = isIncomplete || 
-                                (i < sentences.length - 1 && 
-                                (startsWithLowercase || 
-                                 shortSentence || 
-                                 hasNoEndPunctuation));
-      
-      // Check if we should merge with previous
-      const shouldMergeWithPrevious = (startsWithLowercase || 
-                                     startsWithContinuationWord || 
-                                     containsContinuationWord) && 
-                                     currentSentence && i > 0;
-      
-      if (shouldMergeWithPrevious) {
+      if ((startsWithLowercase || startsWithContinuationWord || containsContinuationWord) && currentSentence && index > 0) {
         // This is a continuation - append to the current sentence
-        currentSentence += ". " + sentence;
+        currentSentence += ". " + trimmedSentence;
       } else {
         // This is a new sentence
         if (currentSentence) {
-          // Add the previous sentence to our results
           mergedSentences.push(currentSentence);
         }
-        currentSentence = sentence;
-      }
-      
-      // Handle the case where we need to peek ahead
-      if (shouldMergeWithNext && i < sentences.length - 1 && !shouldMergeWithPrevious) {
-        // Don't finalize this sentence yet, we'll combine it with the next one
-        // We already set currentSentence = sentence above
-        continue;
-      }
-      
-      // Special case for time references - don't split them up
-      if (isTimeReference && i < sentences.length - 1) {
-        currentSentence += ". " + sentences[i+1];
-        i++; // Skip the next sentence since we just incorporated it
+        currentSentence = trimmedSentence;
       }
       
       // Handle the last sentence
-      if (i === sentences.length - 1 && currentSentence) {
+      if (index === sentences.length - 1 && currentSentence) {
         mergedSentences.push(currentSentence);
       }
-    }
+    });
     
     // If we didn't merge anything, use the original sentences
     if (mergedSentences.length === 0 && sentences.length > 0) {
@@ -564,10 +516,7 @@ const FundamentalCatalystsFixed = () => {
       formattedSentence = formattedSentence.replace(/(key|significant|important|critical|major|primary|essential)/gi, '<em>$1</em>');
       
       // Add emphasis to time references
-      formattedSentence = formattedSentence.replace(/(\d+:\d+\s*(?:AM|PM)\s*(?:ET|EST|EDT)?)/gi, '<strong>$1</strong>');
-      
-      // Add emphasis to event names
-      formattedSentence = formattedSentence.replace(/(Non(?:farm|farm) Payrolls|CPI|GDP|PMI|ISM|Fed|FOMC|ECB|BOE|BOJ)/g, '<strong>$1</strong>');
+      formattedSentence = formattedSentence.replace(/(\d+:\d+\s*(?:AM|PM)\s*ET)/gi, '<strong>$1</strong>');
       
       // Find appropriate emoji
       const emoji = findEmoji(formattedSentence, type);

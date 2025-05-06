@@ -4,43 +4,26 @@
 .netlify
 node_modules
 
-# Dependency directories
+# Python virtual environment
 venv/
-
-# Build output
-build/
-dist/
-*.out
-
-# Logs
-*.log
-
-# OS generated files
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-
-# Environment variables
-.env
-.env.*
-!.env.example
-
-# Python specific
 __pycache__/
 *.py[cod]
 *$py.class
-
-# Backend files
-api.py
-app.py
-requirements.txt
-
-# Archives / Misc
-*.zip
-.files/
-summary.json
-COPILOT.md
+*.so
+.env
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
