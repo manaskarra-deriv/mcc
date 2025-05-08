@@ -1731,11 +1731,15 @@ def get_fundamental_catalyst_summary():
         
         # Define search categories with targeted queries
         search_categories = {
-            "overnight": f"latest {symbol} stock price movements after hours premarket {current_date.strftime('%B %Y')} specific figures trading session",
-            "economic_events": f"today's economic events times and forecasts that will impact {symbol} stock price {current_date.strftime('%m/%d/%Y')}",
-            "geopolitical": f"immediate geopolitical developments affecting {symbol} stock price {current_date.strftime('%m/%d/%Y')} trading impact specific news",
-            "sentiment": f"current {symbol} market trader positioning institutional sentiment analyst ratings {current_date.strftime('%m/%d/%Y')}",
-            "technical": f"{symbol} price key technical levels breakouts support resistance {current_date.strftime('%m/%d/%Y')} trading session"
+            "overnight": f"latest {symbol} stock after hours premarket news trading activity {current_date.strftime('%B %d %Y')} specific figures",
+            # Focus on events/news explicitly tied to *today* or *yesterday* with market impact
+            "economic_events": f"economic news releases market impact {symbol} {current_date.strftime('%B %d %Y')} OR {(current_date - timedelta(days=1)).strftime('%B %d %Y')} Fed statements today",
+            # Focus on immediate/new developments
+            "geopolitical": f"NEW geopolitical developments affecting {symbol} stock price {current_date.strftime('%B %d %Y')} OR {(current_date - timedelta(days=1)).strftime('%B %d %Y')} sanctions trade policy",
+            # Keep sentiment current
+            "sentiment": f"current {symbol} market trader positioning institutional sentiment analyst rating changes {current_date.strftime('%B %d %Y')}",
+            # Technical search results aren't used in the final summary prompt, but keep it date-specific
+            "technical": f"{symbol} price key technical levels support resistance analysis {current_date.strftime('%B %d %Y')}"
         }
         
         # Use our revised search function to get results
@@ -1802,7 +1806,9 @@ def get_fundamental_catalyst_summary():
         3.  **CONTENT AND STYLE:**
             *   **TEMPORAL ACCURACY & EVENT LOGIC:**
                 *   Base discussion of company events (earnings, etc.) **strictly on the most recent relevant event context** from `SEARCHED INFORMATION`. Reference its impact. **DO NOT mention an "imminent" report if context indicates one just occurred.**
-                *   **Economic Reports:** When mentioning reports scheduled for *today* (May 8th), state it clearly (e.g., \'The April employment report **is scheduled for release today** at 8:30 AM ET\', or \'Today at 8:30 AM ET, the April employment report **will be released**\'). Avoid ambiguous phrasing like \'is expected today\'. Ensure the report name (e.g., *April* data) is correct for a May release.
+                *   **Economic Reports & News Focus:** Prioritize discussing economic data releases or significant news **happening *today* (May 8th) or significant news from *yesterday* (May 7th) with clear market impact today.**
+                *   **Filter Stale Economic Data:** If `SEARCHED INFORMATION` mentions an economic report release date that is clearly *several days or more before* the current date ({current_date.strftime('%B %d %Y')}), **do not present it as a primary event for today.** Only mention it if the text specifically discusses significant *ongoing market reaction today* to that older data. Prioritize genuinely *current* news and releases.
+                *   When mentioning reports scheduled for *today* (May 8th), state it clearly (e.g., \'The CPI report *is scheduled for release today* at 8:30 AM ET\'). Avoid ambiguous phrasing like \'is expected today\'.
             *   DO NOT use bullet points/lists. Use prose/paragraph style.
             *   Focus only on essential fundamental catalysts **for {symbol}**.
             *   Include SPECIFIC TIMES of key economic events for today.
