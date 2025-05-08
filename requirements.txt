@@ -1,8 +1,28 @@
+# Data processing and analysis
 pandas
 numpy
-plotly
-python-dotenv
-openai
-alpaca-py
 matplotlib
+plotly
+
+# API and web framework
+flask
+flask-cors
+requests
+
+# Environment variables
+python-dotenv
+
+# Financial data 
 yfinance
+alpaca-py
+
+# AI services
+openai
+
+# Date and time handling
+python-dateutil
+pytz
+
+# Optional utilities that may be helpful
+tqdm
+urllib3

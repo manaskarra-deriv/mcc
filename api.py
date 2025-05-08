@@ -561,7 +561,8 @@ def get_alpaca_data(ticker, start_date, end_date, timeframe=TimeFrame.Day, asset
             timeframe=timeframe,
             start=start_date,
             end=end_date,
-            adjustment='raw'
+            adjustment='raw',
+            feed='iex'  # Add IEX feed for stocks
         )
         
         try:
@@ -1765,44 +1766,59 @@ def get_fundamental_catalyst_summary():
         
         # Generate comprehensive summary based on search results
         summary_prompt = f"""
-        Based on the following data about {symbol}, create a comprehensive daily catalyst summary for trading on {current_date.strftime('%B %d, %Y')}.
-        
-        PRICE DATA:
+        Based on the following data about {symbol}, create a comprehensive daily fundamental catalyst summary for trading on {current_date.strftime('%B %d, %Y')}.
+
+        PRICE DATA: # This is the primary source for current day prices
         - Opening Price: ${opening_price}
         - Current Price: ${current_price}
         - Previous Close: ${previous_price}
         - Change: {price_change_pct}%
-        - Simple Support: ${support_level}
-        - Simple Resistance: ${resistance_level}
-        
+        - Simple Support: ${support_level} # Use this for today\'s support
+        - Simple Resistance: ${resistance_level} # Use this for today\'s resistance
+
+        SEARCHED INFORMATION (Use for context, news, events, and attributed historical/external figures like analyst targets):
         OVERNIGHT DATA:
         {search_results.get('overnight', 'No overnight data available.')}
-        
+
         ECONOMIC EVENTS:
         {search_results.get('economic_events', 'No economic event data available.')}
-        
+
         GEOPOLITICAL FACTORS:
         {search_results.get('geopolitical', 'No geopolitical data available.')}
-        
+
         MARKET SENTIMENT:
         {search_results.get('sentiment', 'No sentiment data available.')}
-        
+
         INSTRUCTIONS:
-        1. Write a concise, fact-based summary in 1-2 paragraphs, focusing on price changes, key catalysts, and trading implications.
-        2. Include SPECIFIC TIMES of key economic events and their likely impact on {symbol}.
-        3. Mention important support/resistance levels with specific price values.
-        4. Identify the most important intraday catalysts traders should watch today.
-        5. Keep technical analysis minimal - focus on basic price movement, not indicators.
-        6. Conclude with 1-2 sentences of actionable trading guidance.
-        7. IMPORTANT: Use a professional, factual tone and include actual dollar values and percentages.
+        1.  **ACCURACY OF PRICES IS PARAMOUNT:**
+            *   Use exact `PRICE DATA` for current day figures (Open, Current, Prev Close, %, Support, Resistance).
+            *   **VALIDATE SEARCHED PRICES:** Before including *any* specific price figure from the `SEARCHED INFORMATION`, compare it to the `PRICE DATA` range. If a searched price is **drastically inconsistent** (e.g., more than 50% different), **DO NOT MENTION THIS INCONSISTENT PRICE AT ALL, NOT EVEN WITH A DISCLAIMER**. Describe the event qualitatively (e.g., \'after-hours trading saw movement\') or omit the specific detail entirely.
+            *   Attribute consistent, contextual prices clearly (e.g., analyst target, past event).
+        2.  **SUMMARY STRUCTURE, LENGTH, AND SPECIFICITY:**
+            *   Strict **MINIMUM 300 words**, **MAXIMUM 400 words**. Target 350-400 words. Ensure completion.
+            *   State all mandatory `PRICE DATA` figures in the first paragraph.
+            *   **EXTREME CONCISENESS & {symbol} SPECIFICITY:** Focus *only* on essential catalysts for {symbol} *today*. Eliminate *all* generic commentary/filler. Incorporate impactful, concrete details about {symbol} from `SEARCHED INFORMATION`.
+            *   Structure into **3-4 very concise paragraphs** (2-5 essential sentences each) with clear themes (Price Action, Overnight/{symbol} Context, Econ Events for {symbol}, Geopolitics for {symbol} & Conclusion).
+        3.  **CONTENT AND STYLE:**
+            *   **TEMPORAL ACCURACY & EVENT LOGIC:**
+                *   Base discussion of company events (earnings, etc.) **strictly on the most recent relevant event context** from `SEARCHED INFORMATION`. Reference its impact. **DO NOT mention an "imminent" report if context indicates one just occurred.**
+                *   **Economic Reports:** When mentioning reports scheduled for *today* (May 8th), state it clearly (e.g., \'The April employment report **is scheduled for release today** at 8:30 AM ET\', or \'Today at 8:30 AM ET, the April employment report **will be released**\'). Avoid ambiguous phrasing like \'is expected today\'. Ensure the report name (e.g., *April* data) is correct for a May release.
+            *   DO NOT use bullet points/lists. Use prose/paragraph style.
+            *   Focus only on essential fundamental catalysts **for {symbol}**.
+            *   Include SPECIFIC TIMES of key economic events for today.
+            *   Identify most important intraday *fundamental* catalysts **for {symbol}**.
+            *   Minimal technicals: Only `Simple Support` and `Simple Resistance` from `PRICE DATA`.
+        4.  **CONCLUSION:**
+            *   Conclude with **1-2 extremely concise sentences** guiding traders to monitor the key identified *fundamental* catalysts and *economic events* for {symbol} today.
+        5.  **TONE:** Professional, factual. Include required dollar values and percentages.
         """
-        
+
         try:
             # Generate the summary using our working query_openai function
             analysis = query_openai(
                 prompt=summary_prompt,
                 temperature=0.7,
-                max_tokens=500,
+                max_tokens=750, # Kept at 750 to allow space, but prompt enforces length
                 is_json=False
             )
         except Exception as analysis_error:
@@ -1859,7 +1875,7 @@ def get_fundamental_catalyst_summary():
             "symbol": symbol,
             "date": current_date.strftime("%B %d, %Y"),
             "analysis": analysis,
-            "search_results": search_results,
+            # "search_results": search_results,
             "news_sources": news_sources
         }), 200, {'Access-Control-Allow-Origin': '*'}
     except Exception as e:
@@ -2267,68 +2283,49 @@ def search():
         
         # Construct a search-focused prompt
         search_prompt = f"""
-        I need information about the following topic. Please provide detailed, factual information 
-        with specific data points where possible. Focus on recent developments, financial data, 
-        and actionable insights. Format as 3-5 distinct documents with titles:
-        
+        I need information about the following topic. Please provide a single, continuous, narrative paragraph summarizing the key information.
+        The paragraph must be well-written, factual, and detailed, focusing on recent developments, financial data, and actionable insights where applicable.
+        IMPORTANT: The output must be a single block of prose. Do NOT use any bullet points, list formats, or internal newline characters that separate sentences or distinct facts. 
+        Combine related ideas into longer, complex sentences to ensure a flowing narrative style suitable for direct display as one unbroken paragraph.
+
         SEARCH QUERY: {query}
-        
-        Return only the search results without any additional explanation or commentary.
-        Each result should represent a unique angle or perspective about the topic.
+
+        Return only this single, continuous summary paragraph. Do not include any additional explanation, titles, or commentary before or after the paragraph.
         """
         
         # Use the query_openai function thatalready works
-        search_results = query_openai(
+        search_results_text = query_openai(
             prompt=search_prompt,
             temperature=0.7,
-            max_tokens=1000,
+            max_tokens=1000,  # Adjusted max_tokens for a potentially longer single paragraph
             is_json=False
         )
         
         # Parse the results and format as documents
-        # We'll create a simple parser to extract "documents" from the text response
+        # The AI is now expected to return a single paragraph.
         documents = []
         
-        # Split by blank lines to separate documents
-        sections = search_results.split('\n\n')
-        for i, section in enumerate(sections):
-            if section.strip():
-                lines = section.strip().split('\n')
-                title = ""
-                text = ""
-                
-                # Try to extract a title from the first line
-                if lines and lines[0]:
-                    # Check if first line looks like a title (short, no period at end)
-                    if len(lines[0]) < 100 and not lines[0].endswith('.'):
-                        title = lines[0].strip()
-                        text = '\n'.join(lines[1:]).strip()
-                    else:
-                        title = f"Result {i+1} for {query}"
-                        text = section.strip()
-                    
-                    documents.append({
-                        "title": title,
-                        "text": text,
-                        "url": f"https://finance.yahoo.com/quote/{query.split()[0]}" if i == 0 else f"https://www.google.com/search?q={urllib.parse.quote(query)}"
-                    })
-                    
-                # Limit to 5 documents
-                if len(documents) >= 5:
-                    break
+        if search_results_text and search_results_text.strip():
+            # The 'query' to /api/search is the full query string.
+            # We can use a generic title or try to make one.
+            # For the detailed analysis tabs, the title might come from the category name on the frontend.
+            title_for_doc = f"Summary for: {query}" 
+            if len(query) > 70: # Keep title shorter if query is long
+                title_for_doc = "Search Result Summary"
+
+            documents.append({
+                "title": title_for_doc,
+                "text": search_results_text.strip(),
+                "url": f"https://www.google.com/search?q={urllib.parse.quote(query)}" 
+            })
         
-        # If we couldn't parse any documents, create a fallback
+        # If we couldn't parse any documents (e.g., empty response from AI), create a fallback
         if not documents:
-            # Create fallback documents
-            topics = ["Recent Price Action", "Market Sentiment", "Economic Factors", "Technical Analysis", "Trading Outlook"]
-            for i, topic in enumerate(topics[:3]):
-                documents.append({
-                    "title": f"{topic} for {query.split()[0] if ' ' in query else query}",
-                    "text": f"This section contains information about {topic.lower()} related to {query}. " + 
-                            search_results[i*200:(i+1)*200] if len(search_results) > i*200 else 
-                            f"Information about {query} is currently being gathered. Please try a more specific search term.",
-                    "url": f"https://finance.yahoo.com/quote/{query.split()[0]}" if i == 0 else f"https://www.google.com/search?q={urllib.parse.quote(query)}"
-                })
+            documents.append({
+                "title": f"No information found for: {query}",
+                "text": f"Detailed information for '{query}' is currently unavailable. Please try rephrasing your query or check back later.",
+                "url": f"https://www.google.com/search?q={urllib.parse.quote(query)}"
+            })
         
         return jsonify({
             'status': 'success',

@@ -77,6 +77,7 @@ const CatalystSummary = styled(Typography)(({ theme }) => ({
   lineHeight: 1.8,
   marginBottom: theme.spacing(3),
   color: theme.palette.text.primary,
+  whiteSpace: 'pre-line',
   '& strong': {
     fontWeight: 600
   }
@@ -170,7 +171,7 @@ const FundamentalCatalystsFixed = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [catalystData, setCatalystData] = useState(null);
-  const [tabValue, setTabValue] = useState(0);
+  // const [tabValue, setTabValue] = useState(0); // Comment out tabValue state
   
   // Add loading status for each category
   const [searchProgress, setSearchProgress] = useState({
@@ -236,9 +237,9 @@ const FundamentalCatalystsFixed = () => {
     }
   }, [handleSearchWithSymbol]);
 
-  const handleTabChange = (event, newValue) => {
-    setTabValue(newValue);
-  };
+  // const handleTabChange = (event, newValue) => { // Comment out handleTabChange
+  //   setTabValue(newValue);
+  // };
 
   // Extract data from analysis text for trading implications
   const extractTradeDataFromAnalysis = useCallback(() => {
@@ -276,297 +277,299 @@ const FundamentalCatalystsFixed = () => {
     };
   }, [catalystData]);
 
-  // Extract paragraphs for specific segments from analysis
-  const getAnalysisByType = useCallback((type) => {
-    if (!catalystData?.analysis) return '';
-    
-    const analysis = catalystData.analysis;
-    const paragraphs = analysis.split("\n\n");
-    
-    if (type === 'combined') {
-      // For combined overnight and geopolitical analysis
-      let overnightText = '';
-      let geopoliticalText = '';
-      
-      // First paragraph typically contains price data and overnight action
-      overnightText = paragraphs[0] || '';
-      
-      // Look for geopolitical keywords to identify relevant paragraph
-      const geopoliticalKeywords = ['geopolitical', 'tensions', 'international', 'global', 'china', 'europe', 'middle east', 'iran', 'missile'];
-      
-      // Find the paragraph with geopolitical content that isn't the same as overnight
-      for (let i = 1; i < paragraphs.length; i++) {
-        const paragraph = paragraphs[i];
-        if (geopoliticalKeywords.some(keyword => paragraph.toLowerCase().includes(keyword)) && 
-            paragraph !== overnightText) {
-          geopoliticalText = paragraph;
-          break;
-        }
-      }
-      
-      // If we found distinct paragraphs, return them together
-      if (overnightText && geopoliticalText && overnightText !== geopoliticalText) {
-        return overnightText + '. ' + geopoliticalText;
-      } 
-      
-      // If we only have overnight text, just return that to avoid duplication
-      if (overnightText) {
-        return overnightText;
-      }
-      
-      // If we couldn't find paragraphs in the analysis, check search_results
-      const overnight = catalystData.search_results?.overnight || '';
-      const geopolitical = catalystData.search_results?.geopolitical || '';
-      
-      // Make sure we're not duplicating content from search results either
-      if (overnight && geopolitical && !overnight.includes(geopolitical) && !geopolitical.includes(overnight)) {
-        return overnight + '. ' + geopolitical;
-      } else if (overnight) {
-        return overnight;
-      } else if (geopolitical) {
-        return geopolitical;
-      }
-      
-      // If we still have nothing, just return the first paragraph
-      return paragraphs[0] || '';
-    }
-    
-    // Original handling for specific types
-    // First paragraph typically contains price data and overnight action
-    if (type === 'overnight') {
-      return paragraphs[0] || '';
-    }
-    
-    // Second paragraph typically contains economic events
-    if (type === 'economic') {
-      return paragraphs[1] || '';
-    }
-    
-    // Look for specific keywords to identify paragraph types
-    const keywordMap = {
-      'geopolitical': ['geopolitical', 'tensions', 'international', 'global', 'china', 'europe'],
-      'sentiment': ['sentiment', 'bullish', 'bearish', 'analyst', 'institutional', 'flows'],
-      'economic': ['economic', 'data', 'report', 'fed', 'inflation', 'employment']
-    };
-    
-    // Search for paragraphs matching keywords
-    const keywords = keywordMap[type] || [];
-    for (const paragraph of paragraphs) {
-      if (keywords.some(keyword => paragraph.toLowerCase().includes(keyword))) {
-        return paragraph;
-      }
-    }
-    
-    // Fallback to search_results if we can't extract from analysis
-    return catalystData.search_results?.[type === 'economic' ? 'economic_events' : type] || '';
-  }, [catalystData]);
+  // Comment out getAnalysisByType function
+  // const getAnalysisByType = useCallback((type) => {
+  //   if (!catalystData?.analysis) return '';
+  //   
+  //   const analysis = catalystData.analysis;
+  //   const paragraphs = analysis.split("\\n\\n");
+  //   
+  //   if (type === 'combined') {
+  //     // For combined overnight and geopolitical analysis
+  //     let overnightText = '';
+  //     let geopoliticalText = '';
+  //     
+  //     // First paragraph typically contains price data and overnight action
+  //     overnightText = paragraphs[0] || '';
+  //     
+  //     // Look for geopolitical keywords to identify relevant paragraph
+  //     const geopoliticalKeywords = ['geopolitical', 'tensions', 'international', 'global', 'china', 'europe', 'middle east', 'iran', 'missile'];
+  //     
+  //     // Find the paragraph with geopolitical content that isn't the same as overnight
+  //     for (let i = 1; i < paragraphs.length; i++) {
+  //       const paragraph = paragraphs[i];
+  //       if (geopoliticalKeywords.some(keyword => paragraph.toLowerCase().includes(keyword)) && 
+  //           paragraph !== overnightText) {
+  //         geopoliticalText = paragraph;
+  //         break;
+  //       }
+  //     }
+  //     
+  //     // If we found distinct paragraphs, return them together
+  //     if (overnightText && geopoliticalText && overnightText !== geopoliticalText) {
+  //       return overnightText + '. ' + geopoliticalText;
+  //     } 
+  //     
+  //     // If we only have overnight text, just return that to avoid duplication
+  //     if (overnightText) {
+  //       return overnightText;
+  //     }
+  //     
+  //     // If we couldn't find paragraphs in the analysis, check search_results
+  //     // const overnight = catalystData.search_results?.overnight || ''; // search_results no longer sent
+  //     // const geopolitical = catalystData.search_results?.geopolitical || ''; // search_results no longer sent
+  //     const overnight = ''; 
+  //     const geopolitical = '';
+  //     
+  //     // Make sure we're not duplicating content from search results either
+  //     if (overnight && geopolitical && !overnight.includes(geopolitical) && !geopolitical.includes(overnight)) {
+  //       return overnight + '. ' + geopolitical;
+  //     } else if (overnight) {
+  //       return overnight;
+  //     } else if (geopolitical) {
+  //       return geopolitical;
+  //     }
+  //     
+  //     // If we still have nothing, just return the first paragraph
+  //     return paragraphs[0] || '';
+  //   }
+  //   
+  //   // Original handling for specific types
+  //   // First paragraph typically contains price data and overnight action
+  //   if (type === 'overnight') {
+  //     return paragraphs[0] || '';
+  //   }
+  //   
+  //   // Second paragraph typically contains economic events
+  //   if (type === 'economic') {
+  //     return paragraphs[1] || '';
+  //   }
+  //   
+  //   // Look for specific keywords to identify paragraph types
+  //   const keywordMap = {
+  //     'geopolitical': ['geopolitical', 'tensions', 'international', 'global', 'china', 'europe'],
+  //     'sentiment': ['sentiment', 'bullish', 'bearish', 'analyst', 'institutional', 'flows'],
+  //     'economic': ['economic', 'data', 'report', 'fed', 'inflation', 'employment']
+  //   };
+  //   
+  //   // Search for paragraphs matching keywords
+  //   const keywords = keywordMap[type] || [];
+  //   for (const paragraph of paragraphs) {
+  //     if (keywords.some(keyword => paragraph.toLowerCase().includes(keyword))) {
+  //       return paragraph;
+  //     }
+  //   }
+  //   
+  //   // Fallback if we can't extract from analysis (search_results no longer sent from backend)
+  //   return ''; // catalystData.search_results?.[type === 'economic' ? 'economic_events' : type] || '';
+  // }, [catalystData]);
 
-  // Enhanced function to format analysis text with rich styling
-  const formatAnalysisText = (text, type) => {
-    if (!text) return null;
-    
-    // Define emojis for different event types
-    const typeEmojis = {
-      overnight: { 
-        price: "💵", 
-        volume: "📊", 
-        gain: "📈", 
-        loss: "📉", 
-        time: "⏰", 
-        report: "📝"
-      },
-      economic: { 
-        report: "📢", 
-        fed: "🏦", 
-        data: "📊", 
-        time: "⏰", 
-        forecast: "🔮",
-        impact: "💥"
-      },
-      geopolitical: { 
-        tension: "🌍", 
-        policy: "🏛️", 
-        risk: "⚠️", 
-        trade: "🚢",
-        security: "🔒"
-      },
-      combined: {
-        price: "💵",
-        volume: "📊",
-        gain: "📈",
-        loss: "📉",
-        time: "⏰",
-        report: "📝",
-        tension: "🌍",
-        policy: "🏛️",
-        risk: "⚠️",
-        trade: "🚢",
-        security: "🔒"
-      }
-    };
-    
-    // Keywords to match for emoji selection
-    const emojiKeywords = {
-      price: ["price", "trading", "$", "open", "close", "high", "low"],
-      volume: ["volume", "shares", "million", "trading"],
-      gain: ["gain", "rise", "increase", "higher", "jumped", "rally", "grew", "bull"],
-      loss: ["loss", "fell", "decrease", "lower", "dropped", "decline", "bear"],
-      time: ["am", "pm", "hour", "minute", "time", "morning", "afternoon", "session"],
-      report: ["report", "announced", "stated", "released", "published"],
-      forecast: ["forecast", "expect", "predict", "outlook", "projection", "estimate"],
-      impact: ["impact", "affect", "influence", "significant", "major", "important"],
-      tension: ["tension", "conflict", "war", "military", "dispute", "crisis"],
-      policy: ["policy", "regulation", "law", "rule", "governance", "compliance"],
-      risk: ["risk", "threat", "danger", "concern", "warning", "caution"],
-      trade: ["trade", "tariff", "export", "import", "commerce", "shipping"],
-      security: ["security", "defense", "protection", "safety", "breach"],
-      fed: ["federal reserve", "fed", "central bank", "interest rate", "monetary"]
-    };
-    
-    // Helper to find the appropriate emoji
-    const findEmoji = (sentence, type) => {
-      // Default emojis by type if no specific match is found
-      const defaultEmoji = {
-        overnight: "📈",
-        economic: "📊",
-        geopolitical: "🌍",
-        combined: "📈"
-      };
-      
-      // Check if any keywords match
-      for (const [category, keywords] of Object.entries(emojiKeywords)) {
-        if (keywords.some(keyword => sentence.toLowerCase().includes(keyword.toLowerCase()))) {
-          return typeEmojis[type]?.[category] || defaultEmoji[type];
-        }
-      }
-      
-      return defaultEmoji[type];
-    };
-    
-    // List of continuation words that indicate a sentence is continuing from the previous one
-    const continuationWords = [
-      "and", "but", "or", "yet", "so", "for", "nor",
-      "because", "although", "though", "while", "as",
-      "since", "unless", "until", "whereas", "however",
-      "therefore", "thus", "hence", "consequently",
-      "furthermore", "additionally", "moreover", "similarly",
-      "likewise", "meanwhile", "nonetheless", "nevertheless",
-      "instead", "accordingly", "subsequently", "concurrently",
-      "specifically", "particularly", "especially", "namely"
-    ];
-    
-    // Break the text into individual sentences and apply formatting
-    // This improved version will detect sentence fragments that should be merged
-    let sentences = text.split(". ").filter(s => s.trim());
-    
-    // Detect and merge continuation sentences
-    let mergedSentences = [];
-    let currentSentence = "";
-    
-    sentences.forEach((sentence, index) => {
-      const trimmedSentence = sentence.trim();
-      
-      // Check if this sentence starts with a lowercase letter or a continuation word
-      const startsWithLowercase = /^[a-z]/.test(trimmedSentence);
-      const startsWithContinuationWord = continuationWords.some(word => 
-        new RegExp(`^${word}\\b`, 'i').test(trimmedSentence)
-      );
-      
-      // Check for continuation words anywhere in the sentence if it's short
-      // This helps detect fragments like "Concurrently, the U.S."
-      const containsContinuationWord = 
-        trimmedSentence.length < 60 && 
-        continuationWords.some(word => 
-          new RegExp(`\\b${word}\\b`, 'i').test(trimmedSentence) &&
-          !new RegExp(`^${word}\\b`, 'i').test(trimmedSentence) // Not at start
-        );
-      
-      if ((startsWithLowercase || startsWithContinuationWord || containsContinuationWord) && currentSentence && index > 0) {
-        // This is a continuation - append to the current sentence
-        currentSentence += ". " + trimmedSentence;
-      } else {
-        // This is a new sentence
-        if (currentSentence) {
-          mergedSentences.push(currentSentence);
-        }
-        currentSentence = trimmedSentence;
-      }
-      
-      // Handle the last sentence
-      if (index === sentences.length - 1 && currentSentence) {
-        mergedSentences.push(currentSentence);
-      }
-    });
-    
-    // If we didn't merge anything, use the original sentences
-    if (mergedSentences.length === 0 && sentences.length > 0) {
-      mergedSentences = sentences;
-    }
-    
-    return mergedSentences.map((sentence, idx) => {
-      if (!sentence.trim()) return null;
-      
-      // Apply formatting based on content
-      let formattedSentence = sentence.trim();
-      
-      // Add bold to key numbers and dollar amounts
-      formattedSentence = formattedSentence.replace(/(\$\d+\.?\d*|\d+\.?\d*%|\d+\.\d+|\d+ million|\d+ billion)/g, '<strong>$1</strong>');
-      
-      // Italicize important terms
-      formattedSentence = formattedSentence.replace(/(key|significant|important|critical|major|primary|essential)/gi, '<em>$1</em>');
-      
-      // Add emphasis to time references
-      formattedSentence = formattedSentence.replace(/(\d+:\d+\s*(?:AM|PM)\s*ET)/gi, '<strong>$1</strong>');
-      
-      // Find appropriate emoji
-      const emoji = findEmoji(formattedSentence, type);
-      
-      // Return formatted content
-      return (
-        <Box 
-          key={idx} 
-          sx={{ 
-            display: 'flex', 
-            alignItems: 'flex-start',
-            mb: 1,
-            py: 1,
-            borderBottom: '1px solid rgba(0,0,0,0.05)' 
-          }}
-        >
-          <Typography 
-            component="span" 
-            sx={{ 
-              mr: 1.5, 
-              fontSize: '1.2rem',
-              lineHeight: 1.6,
-              mt: '2px' 
-            }}
-          >
-            {emoji}
-          </Typography>
-          <Typography 
-            variant="body1" 
-            component="div" 
-            sx={{ 
-              pl: 0.5, 
-              borderRadius: 1,
-              fontSize: '1rem',
-              lineHeight: 1.6,
-              '& strong': {
-                fontWeight: 600,
-                color: 'primary.main'
-              },
-              '& em': {
-                fontStyle: 'italic',
-                color: 'text.secondary'
-              }
-            }}
-            dangerouslySetInnerHTML={{ __html: formattedSentence + (idx < mergedSentences.length - 1 && formattedSentence.length > 0 ? "." : "") }}
-          />
-        </Box>
-      );
-    });
-  };
+  // Comment out formatAnalysisText function
+  // const formatAnalysisText = (text, type) => {
+  //   if (!text) return null;
+  //   
+  //   // Define emojis for different event types
+  //   const typeEmojis = {
+  //     overnight: { 
+  //       price: "💵", 
+  //       volume: "📊", 
+  //       gain: "📈", 
+  //       loss: "📉", 
+  //       time: "⏰", 
+  //       report: "📝"
+  //     },
+  //     economic: { 
+  //       report: "📢", 
+  //       fed: "🏦", 
+  //       data: "📊", 
+  //       time: "⏰", 
+  //       forecast: "🔮",
+  //       impact: "💥"
+  //     },
+  //     geopolitical: { 
+  //       tension: "🌍", 
+  //       policy: "🏛️", 
+  //       risk: "⚠️", 
+  //       trade: "🚢",
+  //       security: "🔒"
+  //     },
+  //     combined: {
+  //       price: "💵",
+  //       volume: "📊",
+  //       gain: "📈",
+  //       loss: "📉",
+  //       time: "⏰",
+  //       report: "📝",
+  //       tension: "🌍",
+  //       policy: "🏛️",
+  //       risk: "⚠️",
+  //       trade: "🚢",
+  //       security: "🔒"
+  //     }
+  //   };
+  //   
+  //   // Keywords to match for emoji selection
+  //   const emojiKeywords = {
+  //     price: ["price", "trading", "$", "open", "close", "high", "low"],
+  //     volume: ["volume", "shares", "million", "trading"],
+  //     gain: ["gain", "rise", "increase", "higher", "jumped", "rally", "grew", "bull"],
+  //     loss: ["loss", "fell", "decrease", "lower", "dropped", "decline", "bear"],
+  //     time: ["am", "pm", "hour", "minute", "time", "morning", "afternoon", "session"],
+  //     report: ["report", "announced", "stated", "released", "published"],
+  //     forecast: ["forecast", "expect", "predict", "outlook", "projection", "estimate"],
+  //     impact: ["impact", "affect", "influence", "significant", "major", "important"],
+  //     tension: ["tension", "conflict", "war", "military", "dispute", "crisis"],
+  //     policy: ["policy", "regulation", "law", "rule", "governance", "compliance"],
+  //     risk: ["risk", "threat", "danger", "concern", "warning", "caution"],
+  //     trade: ["trade", "tariff", "export", "import", "commerce", "shipping"],
+  //     security: ["security", "defense", "protection", "safety", "breach"],
+  //     fed: ["federal reserve", "fed", "central bank", "interest rate", "monetary"]
+  //   };
+  //   
+  //   // Helper to find the appropriate emoji
+  //   const findEmoji = (sentence, type) => {
+  //     // Default emojis by type if no specific match is found
+  //     const defaultEmoji = {
+  //       overnight: "📈",
+  //       economic: "📊",
+  //       geopolitical: "🌍",
+  //       combined: "📈"
+  //     };
+  //     
+  //     // Check if any keywords match
+  //     for (const [category, keywords] of Object.entries(emojiKeywords)) {
+  //       if (keywords.some(keyword => sentence.toLowerCase().includes(keyword.toLowerCase()))) {
+  //         return typeEmojis[type]?.[category] || defaultEmoji[type];
+  //       }
+  //     }
+  //     
+  //     return defaultEmoji[type];
+  //   };
+  //   
+  //   // List of continuation words that indicate a sentence is continuing from the previous one
+  //   const continuationWords = [
+  //     "and", "but", "or", "yet", "so", "for", "nor",
+  //     "because", "although", "though", "while", "as",
+  //     "since", "unless", "until", "whereas", "however",
+  //     "therefore", "thus", "hence", "consequently",
+  //     "furthermore", "additionally", "moreover", "similarly",
+  //     "likewise", "meanwhile", "nonetheless", "nevertheless",
+  //     "instead", "accordingly", "subsequently", "concurrently",
+  //     "specifically", "particularly", "especially", "namely"
+  //   ];
+  //   
+  //   // Break the text into individual sentences and apply formatting
+  //   // This improved version will detect sentence fragments that should be merged
+  //   let sentences = text.split(". ").filter(s => s.trim());
+  //   
+  //   // Detect and merge continuation sentences
+  //   let mergedSentences = [];
+  //   let currentSentence = "";
+  //   
+  //   sentences.forEach((sentence, index) => {
+  //     const trimmedSentence = sentence.trim();
+  //     
+  //     // Check if this sentence starts with a lowercase letter or a continuation word
+  //     const startsWithLowercase = /^[a-z]/.test(trimmedSentence);
+  //     const startsWithContinuationWord = continuationWords.some(word => 
+  //       new RegExp(\`^${word}\\\\b\`, 'i').test(trimmedSentence)
+  //     );
+  //     
+  //     // Check for continuation words anywhere in the sentence if it's short
+  //     // This helps detect fragments like "Concurrently, the U.S."
+  //     const containsContinuationWord = 
+  //       trimmedSentence.length < 60 && 
+  //       continuationWords.some(word => 
+  //         new RegExp(\`\\\\b${word}\\\\b\`, 'i').test(trimmedSentence) &&
+  //         !new RegExp(\`^${word}\\\\b\`, 'i').test(trimmedSentence) // Not at start
+  //       );
+  //     
+  //     if ((startsWithLowercase || startsWithContinuationWord || containsContinuationWord) && currentSentence && index > 0) {
+  //       // This is a continuation - append to the current sentence
+  //       currentSentence += ". " + trimmedSentence;
+  //     } else {
+  //       // This is a new sentence
+  //       if (currentSentence) {
+  //         mergedSentences.push(currentSentence);
+  //       }
+  //       currentSentence = trimmedSentence;
+  //     }
+  //     
+  //     // Handle the last sentence
+  //     if (index === sentences.length - 1 && currentSentence) {
+  //       mergedSentences.push(currentSentence);
+  //     }
+  //   });
+  //   
+  //   // If we didn't merge anything, use the original sentences
+  //   if (mergedSentences.length === 0 && sentences.length > 0) {
+  //     mergedSentences = sentences;
+  //   }
+  //   
+  //   return mergedSentences.map((sentence, idx) => {
+  //     if (!sentence.trim()) return null;
+  //     
+  //     // Apply formatting based on content
+  //     let formattedSentence = sentence.trim();
+  //     
+  //     // Add bold to key numbers and dollar amounts
+  //     formattedSentence = formattedSentence.replace(/(\\$\\d+\\.?\\d*|\\d+\\.?\\d*%|\\d+\\.\\d+|\\d+ million|\\d+ billion)/g, '<strong>$1</strong>');
+  //     
+  //     // Italicize important terms
+  //     formattedSentence = formattedSentence.replace(/(key|significant|important|critical|major|primary|essential)/gi, '<em>$1</em>');
+  //     
+  //     // Add emphasis to time references
+  //     formattedSentence = formattedSentence.replace(/(\\d+:\\d+\\s*(?:AM|PM)\\s*ET)/gi, '<strong>$1</strong>');
+  //     
+  //     // Find appropriate emoji
+  //     const emoji = findEmoji(formattedSentence, type);
+  //     
+  //     // Return formatted content
+  //     return (
+  //       <Box 
+  //         key={idx} 
+  //         sx={{ 
+  //           display: 'flex', 
+  //           alignItems: 'flex-start',
+  //           mb: 1,
+  //           py: 1,
+  //           borderBottom: '1px solid rgba(0,0,0,0.05)' 
+  //         }}
+  //       >
+  //         <Typography 
+  //           component="span" 
+  //           sx={{ 
+  //             mr: 1.5, 
+  //             fontSize: '1.2rem',
+  //             lineHeight: 1.6,
+  //             mt: '2px' 
+  //           }}
+  //         >
+  //           {emoji}
+  //         </Typography>
+  //         <Typography 
+  //           variant="body1" 
+  //           component="div" 
+  //           sx={{ 
+  //             pl: 0.5, 
+  //             borderRadius: 1,
+  //             fontSize: '1rem',
+  //             lineHeight: 1.6,
+  //             '& strong': {
+  //               fontWeight: 600,
+  //               color: 'primary.main'
+  //             },
+  //             '& em': {
+  //               fontStyle: 'italic',
+  //               color: 'text.secondary'
+  //             }
+  //           }}
+  //           dangerouslySetInnerHTML={{ __html: formattedSentence + (idx < mergedSentences.length - 1 && formattedSentence.length > 0 ? "." : "") }}
+  //         />
+  //       </Box>
+  //     );
+  //   });
+  // };
 
   return (
     <Paper sx={{ p: 3, maxWidth: '100%', overflow: 'hidden' }}>
@@ -713,12 +716,15 @@ const FundamentalCatalystsFixed = () => {
           
           <StyledDivider />
           
-          {/* Detailed Analysis */}
+          {/* Detailed Analysis - Section to be removed/commented out */}
+          {/*
           <Typography variant="h6" gutterBottom fontWeight="500">
             Detailed Analysis
           </Typography>
+          */}
           
           {/* Tabs for different analysis categories - Merge Overnight and Geopolitical tabs */}
+          {/*
           <Box sx={{ mb: 3 }}>
             <Tabs
               value={tabValue}
@@ -731,8 +737,10 @@ const FundamentalCatalystsFixed = () => {
               <Tab label="Economic Events" icon={<EventIcon />} iconPosition="start" />
             </Tabs>
           </Box>
+          */}
           
           {/* Geopolitical & Overnight tab panel with improved formatting */}
+          {/*
           {tabValue === 0 && (
             <CategoryContainer>
               <Box sx={{ my: 2 }}>
@@ -740,8 +748,10 @@ const FundamentalCatalystsFixed = () => {
               </Box>
             </CategoryContainer>
           )}
+          */}
           
           {/* Economic Events tab panel with improved formatting */}
+          {/*
           {tabValue === 1 && (
             <CategoryContainer>
               <Box sx={{ my: 2 }}>
@@ -749,6 +759,7 @@ const FundamentalCatalystsFixed = () => {
               </Box>
             </CategoryContainer>
           )}
+          */}
         </ResultsContainer>
       )}
       
