@@ -833,32 +833,8 @@ def get_market_summary():
     end = datetime.now().replace(microsecond=0)
     print(f"Current datetime being used for market summary: {end}")
     
-    # Set the start date based on the time range (same logic as market-data endpoint)
-    if time_range == '1d':
-        start = end - timedelta(days=1)
-        timeframe = TimeFrame.Hour
-    elif time_range == '5d':
-        start = end - timedelta(days=5)
-        timeframe = TimeFrame.Hour
-    elif time_range == '1mo':
-        start = end - timedelta(days=30)
-        timeframe = TimeFrame.Day
-    elif time_range == '3mo':
-        start = end - timedelta(days=90)
-        timeframe = TimeFrame.Day
-    elif time_range == '6mo':
-        start = end - timedelta(days=180)
-        timeframe = TimeFrame.Day
-    elif time_range == 'ytd':
-        start = datetime(end.year, 1, 1)
-        timeframe = TimeFrame.Day
-    elif time_range == '1y':
-        start = end - timedelta(days=365)
-        timeframe = TimeFrame.Day
-    else:
-        # Default case
-        start = end - timedelta(days=1)  # Default to 1 day for market summary
-        timeframe = TimeFrame.Hour
+    # Use the helper function that properly handles weekends and holidays
+    start, end, timeframe = get_market_date_range(time_range)
     
     print(f"Fetching market summary with timeframe {time_range}: {start} to {end}")
     
@@ -876,7 +852,7 @@ def get_market_summary():
                     data = get_alpaca_data(ticker, start, end, timeframe)
                 
                 # Calculate metrics from the data
-                if data:
+                if data and len(data) >= 2:
                     current_price = data[-1]['close']
                     previous_price = data[0]['close']
                     change = current_price - previous_price
